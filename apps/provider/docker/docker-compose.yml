@@ -1,0 +1,101 @@
+services:
+
+    anchorless-provider:
+        restart: unless-stopped
+        container_name: anchorless_provider
+        networks:
+            - anchorless-network
+        build:
+            context: ..
+            dockerfile: docker/Dockerfile
+            target: development-artisan
+        ports:
+            - "8000:8000"
+        volumes:
+            - ../:/var/www/html
+        env_file:
+            - ../.env
+        depends_on:
+            anchorless-postgres:
+                condition: service_healthy
+            anchorless-redis:
+                condition: service_healthy
+        healthcheck:
+            test: [ "CMD-SHELL", "curl -s -f -X GET http://localhost:8000/up | grep -q 'Application up' || exit 1" ]
+            interval: 30m
+            timeout: 5s
+            retries: 3
+            start_period: 30s
+
+    anchorless-queue:
+        restart: unless-stopped
+        container_name: anchorless_queue
+        networks:
+            - anchorless-network
+        build:
+            context: ..
+            dockerfile: docker/Dockerfile
+            target: development-queue
+        volumes:
+            - ../:/var/www/html
+        env_file:
+            - ../.env
+        depends_on:
+            anchorless-provider:
+                condition: service_healthy
+        healthcheck:
+            test: [ "CMD-SHELL", "ps aux | grep '[q]ueue:listen' || exit 1" ]
+            interval: 30m
+            timeout: 5s
+            retries: 3
+            start_period: 30s
+
+    anchorless-postgres:
+        image: postgres:latest
+        restart: always
+        container_name: anchorless_postgres
+        networks:
+            - anchorless-network
+        environment:
+            POSTGRES_USER: anchorless_postgres
+            POSTGRES_PASSWORD: anchorless_postgres
+            POSTGRES_DB: anchorless_postgres
+        ports:
+            - "5432:5432"
+        volumes:
+            - anchorless-postgres-data:/var/lib/postgresql/data
+        healthcheck:
+            test: [ "CMD-SHELL", "pg_isready -U anchorless_postgres" ]
+            interval: 30m
+            timeout: 5s
+            retries: 5
+            start_period: 10s
+
+    anchorless-redis:
+        image: redis:latest
+        restart: always
+        container_name: anchorless_redis
+        command: redis-server /usr/local/etc/redis/redis.conf
+        networks:
+            - anchorless-network
+        ports:
+            - "6379:6379"
+        volumes:
+            - anchorless-redis-data:/data
+            - ./redis.conf:/usr/local/etc/redis/redis.conf
+        sysctls:
+            net.core.somaxconn: 1024
+        healthcheck:
+            test: [ "CMD", "redis-cli", "ping" ]
+            interval: 30m
+            timeout: 5s
+            retries: 5
+            start_period: 10s
+
+networks:
+    anchorless-network:
+        driver: bridge
+
+volumes:
+    anchorless-postgres-data:
+    anchorless-redis-data:

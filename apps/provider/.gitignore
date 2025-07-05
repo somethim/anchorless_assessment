@@ -1,0 +1,67 @@
+# Laravel folders
+/vendor
+/storage/*
+!/storage/.gitignore
+/public/storage
+/public/build
+/public/hot
+/bootstrap/cache/*
+!/bootstrap/cache/.gitignore
+
+# Environment files
+/.env
+/.env.backup
+/.env.production
+/.env.staging
+
+# IDE files
+/.idea/
+/.vscode/
+/.fleet
+
+# Node and Composer dependencies
+/node_modules
+/npm-debug.log
+/yarn-error.log
+
+# PHPUnit cache
+/.phpunit.result.cache
+
+# PHP tools
+/.phpactor.json
+
+# Laravel logs
+/storage/logs/*.log
+/storage/logs/*.log.*
+!/storage/framework/*
+
+
+# Ignoring miscellaneous temporary files
+Homestead.json
+Homestead.yaml
+/.phpunit.cache
+auth.json
+phpunit.xml
+.phpunit.result.cache
+
+# Other miscellaneous files
+.DS_Store
+Thumbs.db
+
+# Composer files
+/composer.lock
+composer.phar
+
+# Debug logs
+yarn-debug.log*
+npm-debug.log*
+debug.log*
+
+# Cache files
+/storage/framework/cache/data
+
+# Ignored storage keys
+/storage/*.key
+
+
+routes/routes.txt
