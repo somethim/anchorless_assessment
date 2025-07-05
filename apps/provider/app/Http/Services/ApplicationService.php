@@ -11,7 +11,7 @@ class ApplicationService
 {
     public function index(string $_id): array
     {
-        return Application::with('attachments')->where('user_uuid', $_id)->get()->toArray();
+        return Application::where('user_uuid', $_id)->get()->toArray();
     }
 
     /**
@@ -37,7 +37,7 @@ class ApplicationService
     /**
      * @throws Throwable
      */
-    public function update(string $application, string $user_uuid, array $newAttachments, array $remove = []): Application
+    public function update(string $application, string $user_uuid, ?array $newAttachments = [], ?array $remove = []): Application
     {
         $application = DB::transaction(function () use ($application, $user_uuid, $newAttachments, $remove) {
             $application = Application::findOrFail($application);
@@ -49,7 +49,9 @@ class ApplicationService
 
             return $application;
         });
-        $application->store_attachments($newAttachments);
+        if (!empty($newAttachments)) {
+            $application->store_attachments($newAttachments);
+        }
 
         return $application->load('attachments');
     }

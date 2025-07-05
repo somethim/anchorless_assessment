@@ -41,16 +41,16 @@ class ApplicationController extends Controller
         }
     }
 
-    public function update(ApplicationRequest $request, string $application): JsonResponse
+    public function update(ApplicationRequest $request, string $current_user, string $application): JsonResponse
     {
         try {
-            return response()->json($this->service->update($application, $request->validated('user_uuid'), $request->validated('attachments')), $request->validated('remove'));
+            return response()->json($this->service->update($application, $request->validated('user_uuid'), $request->validated('attachments'), $request->validated('remove')));
         } catch (Throwable $e) {
             return $this->sendErrorResponse($e);
         }
     }
 
-    public function destroy(string $application): JsonResponse
+    public function destroy(string $current_user, string $application): JsonResponse
     {
         try {
             $this->service->destroy($application);
