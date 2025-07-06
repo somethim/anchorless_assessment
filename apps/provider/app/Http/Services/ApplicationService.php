@@ -2,7 +2,9 @@
 
 namespace App\Http\Services;
 
+use App\Enums\AttachmentType;
 use App\Models\Application;
+use Exception;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Throwable;
@@ -11,7 +13,7 @@ class ApplicationService
 {
     public function index(string $_id): array
     {
-        return Application::where('user_uuid', $_id)->get()->toArray();
+        return Application::where('user_uuid', $_id)->orderBy('_createdAt', 'desc')->get()->toArray();
     }
 
     /**
@@ -29,9 +31,12 @@ class ApplicationService
         return $application->load('attachments');
     }
 
-    public function show(string $current_user): Application
+    public function show(string $application): Application
     {
-        return Application::with('attachments')->where('user_uuid', $current_user)->firstOrFail();
+        return Application::with(['attachments' => function ($query) {
+            $query->orderByRaw(AttachmentType::getOrderClause());
+        }])->findOrFail($application);
+
     }
 
     /**
@@ -41,7 +46,9 @@ class ApplicationService
     {
         $application = DB::transaction(function () use ($application, $user_uuid, $newAttachments, $remove) {
             $application = Application::findOrFail($application);
-            $application->updateOrFail(['user_uuid' => $user_uuid]);
+            if ($application->user_uuid !== $user_uuid) {
+                throw new Exception('Unauthorized action.');
+            }
 
             if (!empty($remove)) {
                 $application->attachments()->whereIn('_id', $remove)->delete();

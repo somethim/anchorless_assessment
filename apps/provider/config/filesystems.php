@@ -78,6 +78,6 @@ return [
     ],
 
 
-    'max_file_size' => env('MAX_FILE_SIZE', 1024 * 1024 * 10), // 10 MB
-
+    'max_file_size' => env('MAX_FILE_SIZE', 1024 * 1024 * 4), // 4 MB
+    'allowed_extensions' => 'pdf,jpg,png',
 ];

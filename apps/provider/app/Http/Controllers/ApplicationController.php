@@ -26,31 +26,31 @@ class ApplicationController extends Controller
     public function store(ApplicationRequest $request): JsonResponse
     {
         try {
-            return response()->json($this->service->store($request->validated('user_uuid'), $request->validated('attachments')), 201);
+            return response()->json($this->service->store(auth()->user()->_id, $request->validated('attachments')), 201);
         } catch (Throwable $e) {
             return $this->sendErrorResponse($e);
         }
     }
 
-    public function show(string $current_user): JsonResponse
+    public function show(string $application): JsonResponse
     {
         try {
-            return response()->json($this->service->show($current_user));
+            return response()->json($this->service->show($application));
         } catch (Throwable $e) {
             return $this->sendErrorResponse($e);
         }
     }
 
-    public function update(ApplicationRequest $request, string $current_user, string $application): JsonResponse
+    public function update(ApplicationRequest $request, string $application): JsonResponse
     {
         try {
-            return response()->json($this->service->update($application, $request->validated('user_uuid'), $request->validated('attachments'), $request->validated('remove')));
+            return response()->json($this->service->update($application, auth()->user()->_id, $request->validated('attachments'), $request->validated('remove')));
         } catch (Throwable $e) {
             return $this->sendErrorResponse($e);
         }
     }
 
-    public function destroy(string $current_user, string $application): JsonResponse
+    public function destroy(string $application): JsonResponse
     {
         try {
             $this->service->destroy($application);

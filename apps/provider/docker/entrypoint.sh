@@ -1,11 +1,11 @@
 #!/bin/sh
 
-# Check for .env files and set the active one
-if [ -f .env.local ]; then
+# Check for .env.local files and set the active one
+if [ -f .env.local.local ]; then
     echo "Using .env.local file..."
     ENV_FILE=".env.local"
     cp .env.local .env
-elif [ -f .env ]; then
+elif [ -f .env.local ]; then
     echo "Using .env file..."
     ENV_FILE=".env"
 else

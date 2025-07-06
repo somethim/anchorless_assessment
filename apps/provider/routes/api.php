@@ -12,8 +12,9 @@ Route::middleware('auth')->controller(UserController::class)->group(function () 
     Route::delete('current-user', 'destroy')->name('current-user.destroy');
     Route::patch('current-user/forgot-password', 'forgot_password')->name('current-user.forgot-password');
     Route::post('current-user/terminate-all-sessions', 'terminate_all_sessions')->name('current-user.terminate-all-sessions');
-    Route::apiResource('current-user.applications', ApplicationController::class);
 });
+
+Route::middleware('auth')->apiResource('applications', ApplicationController::class);
 
 Route::controller(AuthController::class)->middleware('throttle:6,1')
     ->group(function () {

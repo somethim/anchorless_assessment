@@ -15,11 +15,13 @@ class Attachment extends Model
 
     protected $fillable = [
         'path',
+        'type',
         'application_uuid',
     ];
 
     protected $casts = [
         'path' => 'string',
+        'type' => 'string',
         'application_uuid' => 'string',
     ];
 

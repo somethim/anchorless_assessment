@@ -7,7 +7,6 @@ use App\Traits\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Throwable;
 
@@ -43,13 +42,6 @@ class Application extends Model
         });
     }
 
-    /**
-     * Store attachments for the application.
-     *
-     * @param UploadedFile[] $attachments
-     *
-     * @return void
-     */
     public function store_attachments(array $attachments): void
     {
         $disk = Storage::disk('public');
@@ -57,11 +49,11 @@ class Application extends Model
 
         foreach ($attachments as $attachment) {
             try {
-                $file = $disk->putFile($dir, $attachment);
+                $file = $disk->putFile($dir, $attachment['file']);
 
                 $this->attachments()->create([
                     'path' => $file,
-                    'original_name' => $attachment->getClientOriginalName(),
+                    'type' => $attachment['type'],
                 ]);
             } catch (Throwable $th) {
                 report($th);

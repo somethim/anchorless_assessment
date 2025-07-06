@@ -2,26 +2,25 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\AttachmentType;
 use App\Models\Attachment;
-use App\Models\User;
+use Illuminate\Validation\Rule;
 
 class ApplicationRequest extends ValidateRequest
 {
     protected function getRules(): array
     {
         return [
-            'user_uuid' => ['required', 'string', 'exists:' . User::class . ',_id'],
-            'attachments' => ['array', 'nullable', 'min:1'],
-            'attachments.*' => ['required', 'file', 'max:' . config('filesystems.max_file_size')],
-            'remove' => ['array', 'nullable', 'min:1'],
+            'attachments' => ['array', 'nullable', 'min:1', 'max:27'],
+            'attachments.*.file' => [
+                'required',
+                'file',
+                'max:' . config('filesystems.max_file_size'),
+                'mimes:' . config('filesystems.allowed_extensions'),
+            ],
+            'attachments.*.type' => ['string', Rule::enum(AttachmentType::class)],
+            'remove' => ['array', 'nullable', 'min:1', 'max:27'],
             'remove.*' => ['string', 'exists:' . Attachment::class . ',_id', 'distinct'],
         ];
-    }
-
-    protected function prepareForValidation(): void
-    {
-        $this->merge([
-            'user_uuid' => $this->route('current_user'),
-        ]);
     }
 }
