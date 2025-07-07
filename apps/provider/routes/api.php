@@ -19,7 +19,7 @@ Route::middleware('auth')->apiResource('applications', ApplicationController::cl
 Route::controller(AuthController::class)->middleware('throttle:6,1')
     ->group(function () {
         Route::post('auth', 'store')->middleware('guest')->name('auth.post');
-        Route::post('sign-out', 'destroy')->middleware(['auth', 'account.verified'])->name('auth.destroy');
+        Route::post('sign-out', 'destroy')->middleware(['auth'])->name('auth.destroy');
     });
 
 Route::controller(ResetPasswordController::class)->middleware(['throttle:6,1', 'guest'])

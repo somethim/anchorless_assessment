@@ -26,7 +26,6 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'auth' => App\Http\Middleware\ApiAuthenticate::class,
-            'account.verified' => App\Http\Middleware\EnsureAccountIsVerifiedMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

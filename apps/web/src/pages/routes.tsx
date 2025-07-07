@@ -1,12 +1,14 @@
+import {useQuery} from '@tanstack/react-query';
 import {FilePenIcon, FileTextIcon, LockKeyholeOpenIcon, type LucideIcon,} from 'lucide-react';
 import * as React from 'react';
-import {Link, Route, Routes} from 'react-router-dom';
+import {Link, Route, Routes, useLocation, useNavigate,} from 'react-router-dom';
 import {SignOutButton} from '@/components/navigation/sign-out-button';
 import {Button} from '@/components/ui/button';
 import {Application} from '@/pages/application/add-application.tsx';
 import {ShowApplication} from '@/pages/application/show-application.tsx';
 import {NotFound} from '@/pages/not-found';
 import {User} from '@/pages/user';
+import {getCookie, setCsrfToken} from '@/utils/cookies.ts';
 import {Auth} from './auth';
 
 type RouteType = {
@@ -49,6 +51,39 @@ const ROUTES: RouteType[] = [
 ];
 
 export default () => {
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const shouldCheckAuth = location.pathname !== '/authenticate';
+
+    useQuery({
+        queryKey: ['current-user'],
+        queryFn: async () => {
+            await setCsrfToken();
+            const xsrfToken = getCookie('XSRF-TOKEN');
+
+            const response = await fetch(
+                `${import.meta.env.VITE_PROVIDER_URL}/current-user`,
+                {
+                    method: 'GET',
+                    credentials: 'include',
+                    mode: 'cors',
+                    headers: {
+                        Accept: 'application/json',
+                        'X-XSRF-TOKEN': decodeURIComponent(xsrfToken),
+                    },
+                }
+            );
+            if (!response.ok) {
+                navigate('/authenticate');
+                throw new Error('Unauthorized');
+            }
+            return response.json();
+        },
+        retry: false,
+        enabled: shouldCheckAuth,
+    });
+
     return (
         <div className="min-h-screen">
             <nav className="max-w-7xl mx-auto px-4 pb-4">
