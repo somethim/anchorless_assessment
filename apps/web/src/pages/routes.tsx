@@ -1,13 +1,13 @@
-import {FileTextIcon, HomeIcon, LockKeyholeOpenIcon, type LucideIcon, UserIcon,} from 'lucide-react';
+import {FilePenIcon, FileTextIcon, LockKeyholeOpenIcon, type LucideIcon,} from 'lucide-react';
 import * as React from 'react';
 import {Link, Route, Routes} from 'react-router-dom';
-import SignOutButton from '@/components/navigation/SignOutButton';
+import {SignOutButton} from '@/components/navigation/sign-out-button';
 import {Button} from '@/components/ui/button';
-import Application from '@/pages/Application';
-import Auth from '@/pages/Auth';
-import Home from '@/pages/Home';
-import NotFound from '@/pages/NotFound';
-import User from '@/pages/User';
+import {Application} from '@/pages/application/add-application.tsx';
+import {ShowApplication} from '@/pages/application/show-application.tsx';
+import {NotFound} from '@/pages/not-found';
+import {User} from '@/pages/user';
+import {Auth} from './auth';
 
 type RouteType = {
     path: string;
@@ -19,25 +19,25 @@ type RouteType = {
 
 const ROUTES: RouteType[] = [
     {
-        path: '/',
-        component: Home,
-        title: 'home',
-        icon: HomeIcon,
-        navbar: true,
-    },
-    {
-        path: '/current-user',
-        component: User,
-        title: 'user',
-        icon: UserIcon,
-        navbar: true,
-    },
-    {
         path: '/applications',
-        component: Application,
+        component: User,
         title: 'applications',
         icon: FileTextIcon,
         navbar: true,
+    },
+    {
+        path: '/add-application',
+        component: Application,
+        title: 'add application',
+        icon: FilePenIcon,
+        navbar: true,
+    },
+    {
+        path: '/application/:id',
+        component: ShowApplication,
+        title: 'application detail',
+        icon: FileTextIcon,
+        navbar: false,
     },
     {
         path: '/authenticate',
@@ -51,7 +51,7 @@ const ROUTES: RouteType[] = [
 export default () => {
     return (
         <div className="min-h-screen">
-            <nav className="max-w-7xl mx-auto px-4">
+            <nav className="max-w-7xl mx-auto px-4 pb-4">
                 <ul className="flex gap-1 list-none items-center justify-center">
                     {ROUTES.map(({path, title, icon: Icon, navbar}) => {
                         if (!navbar) {

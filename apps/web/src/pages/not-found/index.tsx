@@ -1,6 +1,6 @@
 import {Link} from 'react-router-dom';
 
-export default () => {
+export const NotFound = () => {
     return (
         <div className={'flex flex-col items-center justify-center h-[70svh]'}>
             <h1 className={'text-5xl pb-2'}>404 Not Found</h1>
